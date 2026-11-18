@@ -8,7 +8,7 @@ public record FoodPreferences(
         DietaryType dietaryType,
         Set<Allergen> excludedAllergens,
         Set<Ingredient> excludedIngredients,
-        Set<String> preferredAreas,
+        Set<String> preferredCuisines,
         Set<String> preferredCategories) {
 
     public FoodPreferences {
@@ -17,8 +17,8 @@ public record FoodPreferences(
                 Objects.requireNonNull(excludedAllergens, "excludedAllergens"));
         excludedIngredients = Set.copyOf(
                 Objects.requireNonNull(excludedIngredients, "excludedIngredients"));
-        preferredAreas = Set.copyOf(
-                Objects.requireNonNull(preferredAreas, "preferredAreas"));
+        preferredCuisines = Set.copyOf(
+                Objects.requireNonNull(preferredCuisines, "preferredCuisines"));
         preferredCategories = Set.copyOf(
                 Objects.requireNonNull(preferredCategories, "preferredCategories"));
     }
