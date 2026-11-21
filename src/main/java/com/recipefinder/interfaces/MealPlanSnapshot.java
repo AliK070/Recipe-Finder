@@ -14,7 +14,7 @@ public record MealPlanSnapshot(MealPlan plan, long revision) {
         }
 
         if (revision == 0 && !plan.getDinners().isEmpty()){
-            throw new IllegalArgumentException("An unsaved week must be empty.")
+            throw new IllegalArgumentException("An unsaved week must be empty.");
         }
     }
 }

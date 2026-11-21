@@ -6,7 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 /** Identifies the user's Monday-to-Sunday meal planning week. */
-public record WeekKey(UserID userId, LocalDate weekStart){
+public record WeekKey(UserId userId, LocalDate weekStart){
 
     public WeekKey {
         Objects.requireNonNull(userId, "userId");

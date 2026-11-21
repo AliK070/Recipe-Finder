@@ -11,7 +11,7 @@ public record DinnerSlot(RecipeKey recipeKey, int numServings) {
     public DinnerSlot {
         Objects.requireNonNull(recipeKey, "recipeKey");
 
-        if (servings < MIN_SERVINGS || numServings > MAX_SERVINGS) {
+        if (numServings < MIN_SERVINGS || numServings > MAX_SERVINGS) {
             throw new IllegalArgumentException("Serving size must be between 1 and 12 servings.");
         }
     }
