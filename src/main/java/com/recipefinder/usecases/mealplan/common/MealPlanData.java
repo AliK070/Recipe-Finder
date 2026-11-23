@@ -32,7 +32,8 @@ public record MealPlanData(
                         .sorted(Map.Entry.comparingByKey())
                         .map(entry -> new PlannedDinnerData(
                                 entry.getKey(),
-                                entry.getValue().recipeKey().value(),
+                                entry.getValue().recipeKey().getProvider(),
+                                entry.getValue().recipeKey().getId(),
                                 entry.getValue().numServings()))
                         .toList();
 

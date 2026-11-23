@@ -51,10 +51,11 @@ public final class SetDinnerInteractor
         if (inputData == null
                 || inputData.weekStart() == null
                 || inputData.date() == null
-                || inputData.recipeKey() == null
+                || inputData.recipeProvider() == null
+                || inputData.recipeId() == null
                 || inputData.expectedRevision() < 0) {
 
-            fail(Code.INVALID_INPUT, "Provide a week, date, recipe, and valid revision.");
+            fail(Code.INVALID_INPUT, "Provide a week, date, recipe provider, recipe ID, and valid revision.");
             return;
         }
 
@@ -73,8 +74,9 @@ public final class SetDinnerInteractor
         try {
             key = new WeekKey(userId, inputData.weekStart());
 
-            RecipeKey recipeKey =
-                    new RecipeKey(inputData.recipeKey().trim());
+            RecipeKey recipeKey = new RecipeKey(
+                    inputData.recipeProvider(),
+                    inputData.recipeId());
 
             dinner = new DinnerSlot(
                     recipeKey, inputData.numServings());

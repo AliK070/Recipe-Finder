@@ -6,11 +6,13 @@ import java.util.Objects;
 /** Output data describing one planned dinner. */
 public record PlannedDinnerData(
         LocalDate date,
-        String recipeKey,
+        String recipeProvider,
+        String recipeId,
         int numServings) {
 
     public PlannedDinnerData {
         Objects.requireNonNull(date, "date");
-        Objects.requireNonNull(recipeKey, "recipeKey");
+        Objects.requireNonNull(recipeProvider, "recipeProvider");
+        Objects.requireNonNull(recipeId, "recipeId");
     }
 }

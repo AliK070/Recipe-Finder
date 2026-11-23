@@ -248,7 +248,8 @@ public final class JsonMealPlanRepository
         for (DinnerSlotJson storedDinner : stored.dinners()) {
             if (storedDinner == null
                     || storedDinner.date() == null
-                    || storedDinner.recipeKey() == null
+                    || storedDinner.recipeProvider() == null
+                    || storedDinner.recipeId() == null
                     || storedDinner.numServings() == null) {
 
                 throw new IllegalArgumentException(
@@ -259,7 +260,9 @@ public final class JsonMealPlanRepository
                     LocalDate.parse(storedDinner.date());
 
             DinnerSlot dinner = new DinnerSlot(
-                    new RecipeKey(storedDinner.recipeKey()),
+                    new RecipeKey(
+                            storedDinner.recipeProvider(),
+                            storedDinner.recipeId()),
                     storedDinner.numServings());
 
             if (dinners.putIfAbsent(date, dinner) != null) {
@@ -283,7 +286,8 @@ public final class JsonMealPlanRepository
                         .sorted(Map.Entry.comparingByKey())
                         .map(entry -> new DinnerSlotJson(
                                 entry.getKey().toString(),
-                                entry.getValue().recipeKey().value(),
+                                entry.getValue().recipeKey().getProvider(),
+                                entry.getValue().recipeKey().getId(),
                                 entry.getValue().numServings()))
                         .toList();
 

@@ -6,7 +6,8 @@ import java.time.LocalDate;
 public record SetDinnerInputData(
         LocalDate weekStart,
         LocalDate date,
-        String recipeKey,
+        String recipeProvider,
+        String recipeId,
         int numServings,
         long expectedRevision,
         boolean replacementConfirmed) {
