@@ -1,14 +1,27 @@
+
 package com.recipefinder.entities;
 
 import java.util.Objects;
 
+/** A named ingredient used by a recipe or excluded in food preferences. */
 public final class Ingredient {
     private final String name;
     private final String measurement;
 
     public Ingredient(String name, String measurement) {
-        this.name = name == null ? "" : name;
-        this.measurement = measurement == null ? "" : measurement;
+        Objects.requireNonNull(name, "name");
+
+        this.name = name.trim();
+
+        if (this.name.isEmpty()) {
+            throw new IllegalArgumentException("Ingredient name cannot be blank");
+        }
+
+        this.measurement = measurement == null ? "" : measurement.trim();
+    }
+
+    public Ingredient(String name) {
+        this(name, "");
     }
 
     public String getName() {
@@ -24,7 +37,8 @@ public final class Ingredient {
         if (this == other) return true;
         if (!(other instanceof Ingredient)) return false;
         Ingredient ingredient = (Ingredient) other;
-        return name.equals(ingredient.name) && measurement.equals(ingredient.measurement);
+        return name.equals(ingredient.name)
+                && measurement.equals(ingredient.measurement);
     }
 
     @Override

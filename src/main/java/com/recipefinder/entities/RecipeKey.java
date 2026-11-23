@@ -1,7 +1,9 @@
+
 package com.recipefinder.entities;
 
 import java.util.Objects;
 
+/** Identifies a recipe returned by the recipe provider. */
 public final class RecipeKey {
     private final String provider;
     private final String id;
@@ -13,6 +15,7 @@ public final class RecipeKey {
         if (id == null || id.trim().isEmpty()) {
             throw new IllegalArgumentException("id must not be blank");
         }
+
         this.provider = provider.trim();
         this.id = id.trim();
     }
@@ -30,7 +33,8 @@ public final class RecipeKey {
         if (this == other) return true;
         if (!(other instanceof RecipeKey)) return false;
         RecipeKey recipeKey = (RecipeKey) other;
-        return provider.equals(recipeKey.provider) && id.equals(recipeKey.id);
+        return provider.equals(recipeKey.provider)
+                && id.equals(recipeKey.id);
     }
 
     @Override
