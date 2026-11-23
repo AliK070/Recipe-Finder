@@ -1,0 +1,4 @@
+target/
+data/meal-plans.json
+data/meal-plans.json.lock
+data/.meal-plan-*.tmp
