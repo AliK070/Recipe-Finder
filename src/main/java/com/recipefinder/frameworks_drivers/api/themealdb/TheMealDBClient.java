@@ -75,8 +75,8 @@ public class TheMealDBClient {
             return meals;
         }
 
+        List<Integer> objectStarts = new ArrayList<>();
         int depth = 0;
-        int objectStart = -1;
         boolean quoted = false;
         boolean escaped = false;
         for (int i = 0; i < json.length(); i++) {
@@ -93,16 +93,17 @@ public class TheMealDBClient {
             }
             if (c == '"') {
                 quoted = true;
-                continue;
-            }
-            if (c == '{') {
-                if (depth == 0) objectStart = i;
+            } else if (c == '{') {
                 depth++;
-            } else if (c == '}' && depth > 0) {
+                objectStarts.add(i);
+            } else if (c == '}' && !objectStarts.isEmpty()) {
+                int objectStart = objectStarts.remove(objectStarts.size() - 1);
                 depth--;
-                if (depth == 0 && objectStart >= 0) {
-                    meals.add(parseMeal(json.substring(objectStart, i + 1)));
-                    objectStart = -1;
+                if (depth == 1) {
+                    TheMealDBRecipeDto meal = parseMeal(json.substring(objectStart, i + 1));
+                    if (meal.getIdMeal() != null) {
+                        meals.add(meal);
+                    }
                 }
             }
         }
