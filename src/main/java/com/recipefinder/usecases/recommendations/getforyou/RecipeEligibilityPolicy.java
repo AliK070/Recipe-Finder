@@ -3,10 +3,13 @@ package com.recipefinder.usecases.recommendations.getforyou;
 import com.recipefinder.entities.Allergen;
 import com.recipefinder.entities.FoodPreferences;
 import com.recipefinder.entities.Recipe;
+import com.recipefinder.entities.DietaryType;
+import com.recipefinder.entities.Ingredient;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Locale;
 
 /**
  * Decides whether a recipe is safe to recommend for a user's food preferences.
@@ -53,6 +56,91 @@ public final class RecipeEligibilityPolicy {
     private static final String SEAFOOD_CATEGORY = "seafood";
 
     public boolean isEligible(Recipe recipe, FoodPreferences preferences) {
+        if (!hasRestrictions(preferences)) {
+            return true;
+        }
+        if (recipe.getIngredients().isEmpty()) {
+            return false;
+        }
+        if (!fitsDiet(recipe, preferences.dietaryType())) {
+            return false;
+        }
+        for (Allergen allergen : preferences.excludedAllergens()) {
+            if (containsAllergen(recipe, allergen)) {
+                return false;
+            }
+        }
+        for (Ingredient excluded : preferences.excludedIngredients()) {
+            if (anyIngredientMatches(recipe, Set.of(normalize(excluded.getName()).trim()))) {
+                return false;
+            }
+        }
         return true;
+    }
+    private boolean hasRestrictions(FoodPreferences preferences) {
+        return preferences.dietaryType() != DietaryType.NONE
+                || !preferences.excludedAllergens().isEmpty()
+                || !preferences.excludedIngredients().isEmpty();
+    }
+
+    private boolean fitsDiet(Recipe recipe, DietaryType diet) {
+        String category = recipe.getCategory().trim().toLowerCase(Locale.ROOT);
+        boolean meatCategory = MEAT_CATEGORIES.contains(category);
+        boolean seafoodCategory = SEAFOOD_CATEGORY.equals(category);
+        boolean hasMeat = anyIngredientMatches(recipe, MEAT_TERMS);
+        boolean hasSeafood = containsAllergen(recipe, Allergen.FISH)
+                || containsAllergen(recipe, Allergen.SHELLFISH);
+
+        return switch (diet) {
+            case NONE -> true;
+            case PESCATARIAN -> !meatCategory && !hasMeat;
+            case VEGETARIAN -> !meatCategory && !seafoodCategory && !hasMeat && !hasSeafood;
+            case VEGAN -> fitsDiet(recipe, DietaryType.VEGETARIAN)
+                    && !containsAllergen(recipe, Allergen.MILK)
+                    && !containsAllergen(recipe, Allergen.EGGS)
+                    && !anyIngredientMatches(recipe, Set.of("honey"));
+            case GLUTEN_FREE -> !containsAllergen(recipe, Allergen.WHEAT);
+            case DAIRY_FREE -> !containsAllergen(recipe, Allergen.MILK);
+        };
+    }
+
+    private boolean containsAllergen(Recipe recipe, Allergen allergen) {
+        Set<String> terms = ALLERGEN_TERMS.get(allergen);
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            String name = normalize(ingredient.getName());
+            if (allergen == Allergen.MILK) {
+                for (String safe : NOT_DAIRY) {
+                    name = name.replace(" " + safe + " ", " ");
+                }
+            }
+            if (containsAnyTerm(name, terms)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean anyIngredientMatches(Recipe recipe, Set<String> terms) {
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            if (containsAnyTerm(normalize(ingredient.getName()), terms)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Whole-word match: "egg" matches "egg yolks" but not "eggplant". */
+    private boolean containsAnyTerm(String normalizedName, Set<String> terms) {
+        for (String term : terms) {
+            if (normalizedName.contains(" " + term + " ")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Lower-cases, turns punctuation into spaces, and pads with spaces for whole-word matching. */
+    private static String normalize(String text) {
+        return " " + text.toLowerCase(Locale.ROOT).replaceAll("[^a-z]+", " ").trim() + " ";
     }
 }
