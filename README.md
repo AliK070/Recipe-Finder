@@ -115,7 +115,7 @@ As a cook, I want to assign saved recipes to dates in my weekly schedule so I ca
 
 ### Profile and Food Preferences
 
-`ProfileId` identifies a local profile. `FoodPreferences` stores dietary choices, ingredient or allergy exclusions, and optional cuisine or category preferences.
+`UserId` identifies a local profile. `FoodPreferences` stores dietary choices, ingredient or allergy exclusions, and optional cuisine or category preferences.
 
 ### Recipe and Recipe Key
 

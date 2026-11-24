@@ -1,3 +1,6 @@
+data/meal-plans.json
+data/meal-plans.json.lock
+data/.meal-plan-*.tmp
 # Java build output
 /build/
 out/
